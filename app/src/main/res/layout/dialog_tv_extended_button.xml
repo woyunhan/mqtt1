@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    android:gravity="bottom"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_margin="15dp"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:text="扩展键"
+            android:textColor="#9a9a9a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <include layout="@layout/view_line"/>
+        <include layout="@layout/view_line"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn1"
+            android:text="声音切换"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/btn2"
+            android:text="SEN"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn3"
+            android:text="屏显"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/btn4"
+            android:text="电子节目指南"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn5"
+            android:text="数字"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/btn6"
+            android:text="双画面"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn7"
+            android:text="相框模式"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/btn8"
+            android:text="红"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn9"
+            android:text="绿"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/btn10"
+            android:text="黄"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn11"
+            android:text="蓝"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/btn12"
+            android:text="3D"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn13"
+            android:text="字幕设定"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/btn14"
+            android:text="同步菜单"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn15"
+            android:text="选项"
+            android:textSize="17sp"
+            android:textColor="#9a9a9a"
+            android:background="@drawable/xuxian_boder"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <TextView
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+</LinearLayout>

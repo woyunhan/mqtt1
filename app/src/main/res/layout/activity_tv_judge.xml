@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:background="@drawable/tv_icon"
+        android:layout_margin="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+    <TextView
+        android:layout_above="@+id/ll_judge"
+        android:layout_marginTop="50dp"
+        android:textSize="22sp"
+        android:textColor="#666666"
+        android:gravity="center_horizontal"
+        android:text="电视是否开机？"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/ll_judge"
+        android:layout_margin="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/bt_yes"
+            android:text="是"
+            android:textSize="20sp"
+            android:textColor="#666666"
+            android:elevation="@null"
+            android:background="@drawable/yuan_linearlayout"
+            android:gravity="center"
+            android:layout_marginRight="40dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/bt_no"
+            android:text="否"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:elevation="@null"
+            android:textColor="#666666"
+            android:background="@drawable/yuan_linearlayout"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+</RelativeLayout>

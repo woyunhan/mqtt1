@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/activity_top"/>
+    <include layout="@layout/view_line"/>
+<ImageView
+    android:layout_margin="40dp"
+    android:background="@drawable/cry"
+    android:layout_gravity="center"
+    android:layout_width="60dp"
+    android:layout_height="60dp" />
+    <TextView
+        android:text="暂时无法匹配您的设备"
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

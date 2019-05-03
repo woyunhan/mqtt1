@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/activity_top"/>
+    <LinearLayout
+        android:background="#f5f5f5"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_margin="15dp"
+            android:background="#ffffff"
+            android:layout_width="match_parent"
+            android:layout_height="45dp">
+            <ImageView
+                android:layout_marginLeft="15dp"
+                android:id="@+id/iv_search_for"
+                android:layout_gravity="center"
+                android:background="@drawable/search_for"
+                android:layout_width="22dp"
+                android:layout_height="22dp" />
+            <TextView
+                android:layout_marginLeft="15dp"
+                android:gravity="center_vertical"
+                android:textSize="17sp"
+                android:text="输入品牌、型号"
+                android:textColor="#9a9a9a"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+    </LinearLayout>
+    <TextView
+        android:layout_margin="15dp"
+        android:gravity="center_vertical"
+        android:textSize="17sp"
+        android:text="常见品牌"
+        android:textColor="#9a9a9a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <include layout="@layout/view_line1"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_b"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"/>
+
+</LinearLayout>

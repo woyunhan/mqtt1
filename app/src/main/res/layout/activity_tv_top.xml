@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical"
+    android:background="#ffffff"
+    android:visibility="visible"
+    android:id="@+id/ll_tv_top"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/rl_tv_top"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/tb_nav_buttom"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_width="22dp"-->
+            <!--android:layout_height="22dp"-->
+            <!--android:background="@drawable/more1" />-->
+        <LinearLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tv_control"
+                android:textSize="20sp"
+                android:textColor="#333333"
+                android:text="遥控器"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <!--<ImageView-->
+            <!--android:id="@+id/iv_information"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/setting"-->
+            <!--android:layout_width="35dp"-->
+            <!--android:layout_height="35dp" />-->
+        <TextView
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:background="#eeeeee"
+            android:layout_height="0.5dp"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

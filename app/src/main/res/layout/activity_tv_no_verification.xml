@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.lgw.mqtt1.Util.AirVerification">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/activity_top"/>
+        <include layout="@layout/view_line"/>
+        <TextView
+            android:layout_marginTop="40dp"
+            android:textSize="20sp"
+            android:textColor="#666666"
+            android:gravity="center_horizontal"
+            android:text="请对准电视按住按钮"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:textSize="20sp"
+            android:textColor="#666666"
+            android:gravity="center_horizontal"
+            android:text="电视响应时请立即松手"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:layout_marginTop="50dp"
+            android:id="@+id/ib_icon"
+            android:layout_gravity="center"
+            android:src="@drawable/switch_icon"
+            android:background="@drawable/back_icon"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+        <ImageButton
+            android:layout_marginTop="50dp"
+            android:id="@+id/ib_icon1"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:src="@drawable/plus_icon"
+            android:background="@drawable/back_icon"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+        <TextView
+            android:layout_marginTop="5dp"
+            android:id="@+id/tv_icon"
+            android:textSize="20sp"
+            android:textColor="#999999"
+            android:gravity="center_horizontal"
+            android:text="开机"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="50dp"
+            android:textSize="20sp"
+            android:textColor="#666666"
+            android:gravity="center_horizontal"
+            android:text="根据电器响应结果选择是/否"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_margin="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/bt_yes"
+            android:text="是"
+            android:textSize="20sp"
+            android:textColor="#666666"
+            android:elevation="@null"
+            android:background="@drawable/yuan_linearlayout"
+            android:gravity="center"
+            android:layout_marginRight="40dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+        <Button
+            android:id="@+id/bt_no"
+            android:text="否"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:elevation="@null"
+            android:textColor="#666666"
+            android:background="@drawable/yuan_linearlayout"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="45dp" />
+    </LinearLayout>
+</RelativeLayout>

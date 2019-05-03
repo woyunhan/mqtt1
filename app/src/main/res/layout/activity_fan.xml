@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <include layout="@layout/activity_tv_top"/>
+            <include layout="@layout/activity_extended_top"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_margin="15dp"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/btn_wind_speed"
+                        android:background="@drawable/wind_speed"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp" />
+                    <TextView
+                        android:text="风速/开"
+                        android:textColor="#333333"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_menu"
+                    android:layout_margin="15dp"
+                    android:layout_alignParentRight="true"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/btn_turn_off"
+                        android:background="@drawable/off"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp" />
+                    <TextView
+                        android:text="关"
+                        android:textColor="#333333"
+                        android:layout_marginTop="5dp"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
+            <ImageView
+                android:layout_gravity="center"
+                android:background="@drawable/fan_big"
+                android:layout_width="200dp"
+                android:layout_height="200dp" />
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/ll_mute"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/btn_shaking_head"
+                        android:background="@drawable/shaking_head"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp" />
+                    <TextView
+                        android:text="摇头"
+                        android:layout_marginTop="5dp"
+                        android:textColor="#333333"
+                        android:layout_below="@+id/bt_turn"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_collection"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/btn_wind_class"
+                        android:background="@drawable/wind_class"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp" />
+                    <TextView
+                        android:text="风类"
+                        android:layout_marginTop="5dp"
+                        android:textColor="#333333"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_drop_out"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/btn_timing"
+                        android:background="@drawable/timing"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp" />
+                    <TextView
+                        android:text="定时"
+                        android:layout_marginTop="5dp"
+                        android:textColor="#333333"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_more"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/btn_more"
+                        android:background="@drawable/more"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp" />
+                    <TextView
+                        android:text="更多操作"
+                        android:layout_marginTop="5dp"
+                        android:textColor="#333333"
+                        android:layout_below="@+id/bt_turn"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
