@@ -11,34 +11,34 @@ import android.widget.Button;
 
 import com.example.lgw.mqtt1.R;
 
-import butterknife.BindView;
+
 import butterknife.OnClick;
 
-public class InfoDialog extends Dialog {
-    @BindView(R.id.btn_chanel1)
-    Button btnChanel1;
-    @BindView(R.id.btn_chanel2)
-    Button btnChanel2;
-    @BindView(R.id.btn_chanel3)
-    Button btnChanel3;
-    @BindView(R.id.btn_chanel4)
-    Button btnChanel4;
-    @BindView(R.id.btn_chanel5)
-    Button btnChanel5;
-    @BindView(R.id.btn_chanel6)
-    Button btnChanel6;
-    @BindView(R.id.btn_chanel7)
-    Button btnChanel7;
-    @BindView(R.id.btn_chanel8)
-    Button btnChanel8;
-    @BindView(R.id.btn_chanel9)
-    Button btnChanel9;
-    @BindView(R.id.btn_chanel_input)
-    Button btnChanelInput;
-    @BindView(R.id.btn_chanel0)
-    Button btnChanel0;
-    @BindView(R.id.btn_return)
-    Button btnReturn;
+public class InfoDialog extends Dialog implements View.OnClickListener {
+
+    private Button btnChanel1;
+
+    private Button btnChanel2;
+
+    private Button btnChanel3;
+
+    private Button btnChanel4;
+
+    private Button btnChanel5;
+
+    private Button btnChanel6;
+
+    private Button btnChanel7;
+
+    private Button btnChanel8;
+
+    private Button btnChanel9;
+
+    private Button btnChanelInput;
+
+    private Button btnChanel0;
+
+    private Button btnReturn;
     public InfoDialog(Context context) {
         super(context, R.style.MyDialog);
     }
@@ -59,6 +59,8 @@ public class InfoDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_tv_change_station);
+        intView();
+        initData();
         //按空白处能取消动画
         setCanceledOnTouchOutside(true);
         //用户可以点击后退键关闭 Dialog
@@ -67,6 +69,36 @@ public class InfoDialog extends Dialog {
         initDiaglog();
 
     }
+    private void intView() {
+        btnChanel1=(Button)findViewById(R.id.btn_chanel1);
+        btnChanel2=(Button)findViewById(R.id.btn_chanel2);
+        btnChanel3=(Button)findViewById(R.id.btn_chanel3);
+        btnChanel4=(Button)findViewById(R.id.btn_chanel4);
+        btnChanel5=(Button)findViewById(R.id.btn_chanel5);
+        btnChanel6=(Button)findViewById(R.id.btn_chanel6);
+        btnChanel7=(Button)findViewById(R.id.btn_chanel7);
+        btnChanel8=(Button)findViewById(R.id.btn_chanel8);
+        btnChanel9=(Button)findViewById(R.id.btn_chanel9);
+        btnChanel0=(Button)findViewById(R.id.btn_chanel0);
+        btnChanelInput=(Button)findViewById(R.id.btn_chanel_input);
+        btnReturn=(Button)findViewById(R.id.btn_return);
+    }
+    private void initData() {
+        btnChanel1.setOnClickListener(this);
+        btnChanel2.setOnClickListener(this);
+        btnChanel3.setOnClickListener(this);
+        btnChanel4.setOnClickListener(this);
+        btnChanel5.setOnClickListener(this);
+        btnChanel6.setOnClickListener(this);
+        btnChanel7.setOnClickListener(this);
+        btnChanel8.setOnClickListener(this);
+        btnChanel9.setOnClickListener(this);
+        btnChanel0.setOnClickListener(this);
+        btnChanelInput.setOnClickListener(this);
+        btnReturn.setOnClickListener(this);
+    }
+
+
 
     private void initDiaglog() {
         getWindow().setGravity(Gravity.CENTER); //显示在中央
@@ -149,9 +181,10 @@ public class InfoDialog extends Dialog {
 
     }
 
-    @OnClick({R.id.btn_chanel1, R.id.btn_chanel2, R.id.btn_chanel3, R.id.btn_chanel4, R.id.btn_chanel5, R.id.btn_chanel6, R.id.btn_chanel7, R.id.btn_chanel8, R.id.btn_chanel9, R.id.btn_chanel_input, R.id.btn_chanel0, R.id.btn_return})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.btn_chanel1:
                 if (btn_chanel1OnclickListener != null) {
                     btn_chanel1OnclickListener.onBtn_chanel1Click();
@@ -212,7 +245,7 @@ public class InfoDialog extends Dialog {
                     btn_returnOnclickListener.onBtn_returnClick();
                 }
                 break;
-                default:
+            default:
         }
     }
 

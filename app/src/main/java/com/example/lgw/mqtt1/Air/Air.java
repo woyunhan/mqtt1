@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public  class Air {
 	//	String[] t= {"制热","开机","一级","扫风","睡眠","温度","睡眠定时","超强","灯光","健康",
 	//			"干燥/辅热","换气","上下扫风","左右扫风","显示温度","温度"};
-	String[] t= {"制热","开机","一级","无","无","25","0","普通","灭","无",
+	String[] t= {"制热","开机","1","无","无","25","0","普通","灭","无",
 			"无","无","无","无","显示","25"};
 	public  ArrayList<String> list = new ArrayList<String>();
 
@@ -72,16 +72,16 @@ public  class Air {
 		}
 	/*风速*/
 		switch(t[2]){
-			case "一级":
+			case "1":
 				list.add(3,"560,1690,560,560");dataValue += "t[2]一级";break;
 
-			case "二级":
+			case "2":
 				list.add(3,"560,560,560,1690");dataValue += "t[2]二级";break;
 
-			case "三级":
+			case "3":
 				list.add(3,"560,1690,560,1690");dataValue += "t[2]三级";break;
 
-			case "自动":
+			case "4":
 				list.add(3,"560,560,560,560");dataValue += "t[2]自动";break;
 
 			default:

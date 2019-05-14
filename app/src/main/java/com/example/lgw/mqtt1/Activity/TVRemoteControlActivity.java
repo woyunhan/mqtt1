@@ -35,68 +35,47 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
+
 import butterknife.OnClick;
 
 
 public class TVRemoteControlActivity extends Activity implements View.OnClickListener {
 
-    @BindView(R.id.tv_control)
-    TextView tvControl;
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
-    @BindView(R.id.btn_turn)
-    Button btnTurn;
-    @BindView(R.id.btn_menu)
-    Button btnMenu;
-    @BindView(R.id.rl_plus)
-    RelativeLayout rlPlus;
-    @BindView(R.id.rl_less)
-    RelativeLayout rlLess;
-    @BindView(R.id.tv_ok)
-    TextView tvOk;
-    @BindView(R.id.btn_up)
-    Button btnUp;
-    @BindView(R.id.btn_down)
-    Button btnDown;
-    @BindView(R.id.btn_right)
-    Button btnRight;
-    @BindView(R.id.btn_left)
-    Button btnLeft;
-    @BindView(R.id.rl_next)
-    RelativeLayout rlNext;
-    @BindView(R.id.rl_previous)
-    RelativeLayout rlPrevious;
-    @BindView(R.id.btn_tvav)
-    Button btnTvav;
-    @BindView(R.id.btn_chanel)
-    Button btnChanel;
-    @BindView(R.id.btn_reminisce)
-    Button btnReminisce;
-    @BindView(R.id.btn_mute)
-    Button btnMute;
-    @BindView(R.id.btn_collection)
-    Button btnCollection;
-    @BindView(R.id.btn_drop_out)
-    Button btnDropOut;
-    @BindView(R.id.btn_more)
-    Button btnMore;
     private MqttClient client;//client
     private MqttConnectOptions options;//配置
     String TelephonyIMEI = "";
     MqttConnectThread mqttConnectThread = new MqttConnectThread();//连接服务器任务
     private RemoteDao ordersDao;
+    private TextView tv_control;
     private InfoDialog infoDialog;
     private TVExtendedDialog tvExtendedDialog;
-    MqttMessage msgMessage = null;
+    private Button btn_turn;
+    private Button btn_menu;
+    private Button btn_tvav;
+    private Button btn_chanel;
+    private Button btn_reminisce;
+    private Button btn_mute;
+    private Button btn_collection;
+    private Button btn_drop_out;
+    private Button btn_more;
+    private RelativeLayout rl_plus;
+    private RelativeLayout rl_less;
+    private RelativeLayout rl_previous;
+    private RelativeLayout rl_next;
+    private Button btn_up;
+    private Button btn_down;
+    private Button btn_left;
+    private Button btn_right;
+    private TextView tv_ok;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tv);
-        ButterKnife.bind(this);
+
         initView();
+        initOnClickListener();
         init();
     }
 
@@ -106,16 +85,116 @@ public class TVRemoteControlActivity extends Activity implements View.OnClickLis
         if (!ordersDao.isDataExist()) {
             ordersDao.initTable();
         }
-        tvControl.setText("索尼电视 tv_sony_rm_sd021");
+        tv_ok = (TextView) findViewById(R.id.tv_ok);
+        tv_control = (TextView) findViewById(R.id.tv_control);
+        tv_control.setText("索尼电视 tv_sony_rm_sd021");
+        btn_turn = (Button) findViewById(R.id.btn_turn);
+        btn_menu = (Button) findViewById(R.id.btn_menu);
+        btn_tvav = (Button) findViewById(R.id.btn_tvav);
+        btn_chanel = (Button) findViewById(R.id.btn_chanel);
+        btn_reminisce = (Button) findViewById(R.id.btn_reminisce);
+        btn_mute = (Button) findViewById(R.id.btn_mute);
+        btn_collection = (Button) findViewById(R.id.btn_collection);
+        btn_drop_out = (Button) findViewById(R.id.btn_drop_out);
+        btn_more = (Button) findViewById(R.id.btn_more);
+        rl_plus = (RelativeLayout) findViewById(R.id.rl_plus);
+        rl_less = (RelativeLayout) findViewById(R.id.rl_less);
+        rl_previous = (RelativeLayout) findViewById(R.id.rl_previous);
+        rl_next = (RelativeLayout) findViewById(R.id.rl_next);
+        btn_up = (Button) findViewById(R.id.btn_up);
+        btn_down = (Button) findViewById(R.id.btn_down);
+        btn_left = (Button) findViewById(R.id.btn_left);
+        btn_right = (Button) findViewById(R.id.btn_right);
 
 
     }
 
-
+    private void initOnClickListener() {
+        tv_ok.setOnClickListener(this);
+        btn_turn.setOnClickListener(this);
+        btn_menu.setOnClickListener(this);
+        btn_tvav.setOnClickListener(this);
+        btn_chanel.setOnClickListener(this);
+        btn_reminisce.setOnClickListener(this);
+        btn_mute.setOnClickListener(this);
+        btn_collection.setOnClickListener(this);
+        btn_drop_out.setOnClickListener(this);
+        btn_more.setOnClickListener(this);
+        rl_plus.setOnClickListener(this);
+        rl_less.setOnClickListener(this);
+        rl_previous.setOnClickListener(this);
+        rl_next.setOnClickListener(this);
+        btn_up.setOnClickListener(this);
+        btn_down.setOnClickListener(this);
+        btn_left.setOnClickListener(this);
+        btn_right.setOnClickListener(this);
+    }
 
     @Override
     public void onClick(View view) {
+        MqttMessage msgMessage = null;
         switch (view.getId()) {
+            case R.id.btn_turn:
+                initShock();
+                List<Remote> turnOrders = ordersDao.getTurnOrder();
+                for (Remote Remote : turnOrders) {
+                    msgMessage = new MqttMessage((Remote.code).getBytes());
+                }
+
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_menu:
+                initShock();
+                List<Remote> menuOrders = ordersDao.getMenuOrder();
+                for (Remote Remote : menuOrders) {
+                    msgMessage = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_tvav:
+                initShock();
+                List<Remote> tvavOrders = ordersDao.getTvavOrder();
+                for (Remote Remote : tvavOrders) {
+                    msgMessage = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
             case R.id.btn_more:
                 tvExtendedDialog = new TVExtendedDialog(TVRemoteControlActivity.this);
                 tvExtendedDialog.setBtn1OnclickListener(new TVExtendedDialog.onBtn1OnclickListener() {
@@ -541,19 +620,90 @@ public class TVRemoteControlActivity extends Activity implements View.OnClickLis
                 Vibrator vibrator3 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator3.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage3 = null;
-
+                List<Remote> reminiseceOrders = ordersDao.getReminisceOrder();
+                for (Remote Remote : reminiseceOrders) {
+                    msgMessage3 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage3);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.btn_mute:
                 Vibrator vibrator4 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator4.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage4 = null;
-
+                List<Remote> muteOrders = ordersDao.getMuteOrder();
+                for (Remote Remote : muteOrders) {
+                    msgMessage4 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage4);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.tv_ok:
                 Vibrator vibrator5 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator5.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage5 = null;
-
+                List<Remote> okOrders = ordersDao.getOkOrder();
+                for (Remote Remote : okOrders) {
+                    msgMessage5 = new MqttMessage((Remote.code).getBytes());
+                }
+                Log.e("tag", "" + msgMessage5);
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage5);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_drop_out:
+                Vibrator vibrator6 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
+                vibrator6.vibrate(new long[]{0, 100}, -1);
+                MqttMessage msgMessage6 = null;
+                List<Remote> drop_outOrders = ordersDao.getDrop_outOrder();
+                for (Remote Remote : drop_outOrders) {
+                    msgMessage6 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage6);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.btn_chanel:
                 infoDialog = new InfoDialog(TVRemoteControlActivity.this);
@@ -878,49 +1028,177 @@ public class TVRemoteControlActivity extends Activity implements View.OnClickLis
                 Vibrator vibrator7 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator7.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage7 = null;
-
+                List<Remote> plusOrders = ordersDao.getPlusOrder();
+                for (Remote Remote : plusOrders) {
+                    msgMessage7 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage7);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.rl_less:
                 Vibrator vibrator8 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator8.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage8 = null;
-
+                List<Remote> lessOrders = ordersDao.getLessOrder();
+                for (Remote Remote : lessOrders) {
+                    msgMessage8 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage8);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.rl_previous:
                 Vibrator vibrator9 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator9.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage9 = null;
-
+                List<Remote> previousOrders = ordersDao.getPreviousOrder();
+                for (Remote Remote : previousOrders) {
+                    msgMessage9 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage9);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.rl_next:
                 Vibrator vibrator10 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator10.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage10 = null;
-
+                List<Remote> nextOrders = ordersDao.getNextOrder();
+                for (Remote Remote : nextOrders) {
+                    msgMessage10 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage10);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.btn_up:
                 Vibrator vibrator11 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator11.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage11 = null;
-
+                List<Remote> upOrders = ordersDao.getUpOrder();
+                for (Remote Remote : upOrders) {
+                    msgMessage11 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage11);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.btn_down:
                 Vibrator vibrator12 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator12.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage12 = null;
-
+                List<Remote> downOrders = ordersDao.getDownOrder();
+                for (Remote Remote : downOrders) {
+                    msgMessage12 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage12);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.btn_left:
                 Vibrator vibrator13 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator13.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage13 = null;
-
+                List<Remote> leftOrders = ordersDao.getLeftOrder();
+                for (Remote Remote : leftOrders) {
+                    msgMessage13 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage13);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
             case R.id.btn_right:
                 Vibrator vibrator14 = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
                 vibrator14.vibrate(new long[]{0, 100}, -1);
                 MqttMessage msgMessage14 = null;
+                List<Remote> rightOrders = ordersDao.getRightOrder();
+                for (Remote Remote : rightOrders) {
+                    msgMessage14 = new MqttMessage((Remote.code).getBytes());
+                }
+                try {
+                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
+                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage14);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
 
+                    e.printStackTrace();
+                } catch (MqttException e) {
+
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
                 break;
 
             default:
@@ -1034,317 +1312,6 @@ public class TVRemoteControlActivity extends Activity implements View.OnClickLis
         //            }
         //        });
     }
-
-    @OnClick({R.id.btn_turn, R.id.btn_menu, R.id.rl_plus, R.id.rl_less, R.id.btn_up, R.id.btn_down, R.id.btn_right, R.id.btn_left, R.id.rl_next, R.id.rl_previous, R.id.btn_tvav, R.id.btn_chanel, R.id.btn_reminisce, R.id.btn_mute,  R.id.btn_drop_out, R.id.tv_ok})
-    public void onViewClicked(View view) {
-
-        switch (view.getId()) {
-            case R.id.btn_turn:
-                initShock();
-                List<Remote> turnOrders = ordersDao.getTurnOrder();
-                for (Remote Remote : turnOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_menu:
-                initShock();
-                List<Remote> menuOrders = ordersDao.getMenuOrder();
-                for (Remote Remote : menuOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.rl_plus:
-                initShock();
-                List<Remote> plusOrders = ordersDao.getPlusOrder();
-                for (Remote Remote : plusOrders) {
-                    msgMessage= new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.rl_less:
-                initShock();
-                List<Remote> lessOrders = ordersDao.getLessOrder();
-                for (Remote Remote : lessOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_up:
-                initShock();
-                List<Remote> upOrders = ordersDao.getUpOrder();
-                for (Remote Remote : upOrders) {
-                    msgMessage= new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_down:
-                List<Remote> downOrders = ordersDao.getDownOrder();
-                for (Remote Remote : downOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_right:
-                initShock();
-                List<Remote> rightOrders = ordersDao.getRightOrder();
-                for (Remote Remote : rightOrders) {
-                    msgMessage= new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-
-                    e.printStackTrace();
-                } catch (MqttException e) {
-
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_left:
-                initShock();
-                List<Remote> leftOrders = ordersDao.getLeftOrder();
-                for (Remote Remote : leftOrders) {
-                    msgMessage= new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.rl_next:
-                initShock();
-                List<Remote> nextOrders = ordersDao.getNextOrder();
-                for (Remote Remote : nextOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.rl_previous:
-                List<Remote> previousOrders = ordersDao.getPreviousOrder();
-                for (Remote Remote : previousOrders) {
-                    msgMessage= new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_tvav:
-                initShock();
-                List<Remote> tvavOrders = ordersDao.getTvavOrder();
-                for (Remote Remote : tvavOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_chanel:
-                break;
-            case R.id.btn_reminisce:
-                initShock();
-                List<Remote> reminiseceOrders = ordersDao.getReminisceOrder();
-                for (Remote Remote : reminiseceOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_mute:
-                initShock();
-                List<Remote> muteOrders = ordersDao.getMuteOrder();
-                for (Remote Remote : muteOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_drop_out:
-                initShock();
-                List<Remote> drop_outOrders = ordersDao.getDrop_outOrder();
-                for (Remote Remote : drop_outOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.tv_ok:
-                initShock();
-                List<Remote> okOrders = ordersDao.getOkOrder();
-                for (Remote Remote : okOrders) {
-                    msgMessage = new MqttMessage((Remote.code).getBytes());
-                }
-                Log.e("tag", "" + msgMessage);
-                try {
-                    //client.publish("/test/button",msgMessage);//发送主题为"/test/button"的消息
-                    //client.publish("inTopic",msgMessage);//发送主题为"/test/button"的消息请注意
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            default:
-        }
-    }
-
 
     /*连接服务器任务*/
     class MqttConnectThread extends Thread {

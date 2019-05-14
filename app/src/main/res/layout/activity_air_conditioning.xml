@@ -28,7 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text=""
+                    android:text="25"
                     android:textSize="60dp" />
 
                 <TextView
@@ -84,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="15dp"
-                    android:layout_weight="1.5"
+                    android:layout_weight="0.5"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -101,13 +101,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="15dp"
-                    android:layout_weight="1.5"
+                    android:layout_weight="0.5"
                     android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:background="@drawable/plus"
                         android:textColor="#333333"
                         android:textSize="30sp" />
@@ -233,7 +233,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="送风"
+                        android:text="风速"
                         android:textColor="#333333"
                         android:textSize="18sp" />
                 </LinearLayout>

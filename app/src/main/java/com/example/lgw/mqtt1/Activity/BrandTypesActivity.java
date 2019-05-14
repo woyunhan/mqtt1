@@ -1,4 +1,4 @@
-﻿package com.example.lgw.mqtt1.Activity;
+package com.example.lgw.mqtt1.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

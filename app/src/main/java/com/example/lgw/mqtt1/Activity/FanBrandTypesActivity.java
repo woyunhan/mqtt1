@@ -81,7 +81,7 @@ public class FanBrandTypesActivity extends Activity{
     private class MyOnclick implements BaseAdapter.OnItemClikListener {
         @Override
         public void OnItemClick(View view, int pos) {
-            Intent intent = new Intent(FanBrandTypesActivity.this,FanRemoteControlActivity.class);
+            Intent intent = new Intent(FanBrandTypesActivity.this,FanVerification.class);
             startActivity(intent);
         }
     }

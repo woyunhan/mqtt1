@@ -1,8 +1,9 @@
-﻿package com.example.lgw.mqtt1.Activity;
+package com.example.lgw.mqtt1.Activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -12,14 +13,16 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.lgw.mqtt1.Air.Air;
 import com.example.lgw.mqtt1.R;
+import com.example.lgw.mqtt1.remote.Remote;
 import com.example.lgw.mqtt1.remote.RemoteDao;
 import com.example.lgw.mqtt1.view.AirConditioningExtendedDialog;
+
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -27,72 +30,328 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 public class AirConditioningRemoteControlActivity extends Activity implements View.OnClickListener {
-    @BindView(R.id.tv_control)
-    TextView tvControl;
-    @BindView(R.id.iv_back)
-    ImageView ivBack;
-    @BindView(R.id.tv_temperature)
-    TextView tvTemperature;
-    @BindView(R.id.btn_turn)
-    Button btnTurn;
-    @BindView(R.id.ll_less)
-    LinearLayout llLess;
-    @BindView(R.id.ll_plus)
-    LinearLayout llPlus;
-    @BindView(R.id.btn_off)
-    Button btnOff;
-    @BindView(R.id.btn_refrigeration)
-    Button btnRefrigeration;
-    @BindView(R.id.btn_heating)
-    Button btnHeating;
-    @BindView(R.id.btn_dehumidification)
-    Button btnDehumidification;
-    @BindView(R.id.btn_air_supply)
-    Button btnAirSupply;
-    @BindView(R.id.btn_sweep_up_and_down)
-    Button btnSweepUpAndDown;
-    @BindView(R.id.btn_sweep_left_and_right)
-    Button btnSweepLeftAndRight;
-    @BindView(R.id.btn_timing)
-    Button btnTiming;
-    @BindView(R.id.btn_more)
-    Button btnMore;
     private MqttClient client;//client
     private MqttConnectOptions options;//配置
     String TelephonyIMEI = "";
-    MqttConnectThread mqttConnectThread = new MqttConnectThread();//连接服务器任务
+    AirConditioningRemoteControlActivity.MqttConnectThread mqttConnectThread = new AirConditioningRemoteControlActivity.MqttConnectThread();//连接服务器任务
     private RemoteDao ordersDao;
+    private TextView tv_control;
     private AirConditioningExtendedDialog airConditioningExtendedDialog;
-    MqttMessage msgMessage = null;
+    private TextView tv_temperature;
+    private Button btn_turn;
+    private LinearLayout ll_less;
+    private LinearLayout ll_plus;
+    private Button btn_off;
+    private Button btn_refrigeration;
+    private Button btn_heating;
+    private Button btn_dehumidification;
+    private Button btn_air_supply;
+    private Button btn_sweep_up_and_down;
+    private Button btn_sweep_left_and_right;
+    private Button btn_more;
+    private Button btn_timing;
     Air airControl;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_air_conditioning);
-        ButterKnife.bind(this);
         initView();
+        initOnClickListener();
         airControl = new Air();
         init();
     }
-
     private void initView() {
         ordersDao = new RemoteDao(this);
         ordersDao.initTable();
-        tvControl.setText("格力空调 airmate_fan_weizhi");
-        btnMore.setOnClickListener(this);
+        tv_control = (TextView) findViewById(R.id.tv_control);
+        tv_control.setText("格力空调 airmate_fan_weizhi");
+        tv_temperature = (TextView) findViewById(R.id.tv_temperature);
+        btn_turn = (Button) findViewById(R.id.btn_turn);
+        ll_less = (LinearLayout) findViewById(R.id.ll_less);
+        ll_plus = (LinearLayout) findViewById(R.id.ll_plus);
+        btn_off = (Button) findViewById(R.id.btn_off);
+        btn_refrigeration = (Button) findViewById(R.id.btn_refrigeration);
+        btn_heating = (Button) findViewById(R.id.btn_heating);
+        btn_dehumidification = (Button) findViewById(R.id.btn_dehumidification);
+        btn_air_supply = (Button) findViewById(R.id.btn_air_supply);
+        btn_sweep_up_and_down = (Button) findViewById(R.id.btn_sweep_up_and_down);
+        btn_sweep_left_and_right = (Button) findViewById(R.id.btn_sweep_left_and_right);
+        btn_more = (Button) findViewById(R.id.btn_more);
+        btn_timing = (Button) findViewById(R.id.btn_timing);
     }
-
+    private void initOnClickListener() {
+        btn_turn.setOnClickListener(this);
+        ll_less.setOnClickListener(this);
+        ll_plus.setOnClickListener(this);
+        btn_off.setOnClickListener(this);
+        btn_refrigeration.setOnClickListener(this);
+        btn_heating.setOnClickListener(this);
+        btn_dehumidification.setOnClickListener(this);
+        btn_air_supply.setOnClickListener(this);
+        btn_sweep_up_and_down.setOnClickListener(this);
+        btn_sweep_left_and_right.setOnClickListener(this);
+        btn_more.setOnClickListener(this);
+        btn_timing.setOnClickListener(this);
+    }
     String[] t;
     String s;
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.btn_turn:
+                initShock();
+                t = airControl.getT();
+                t[1] = "开机";
+                airControl.setT(t);
+                s = airControl.S();
+                tv_temperature.setText(t[5]);
+                Log.e("open", String.valueOf(airControl.S().length()));
+                MqttMessage mqttMessage = new MqttMessage(s.getBytes());
+                try {
+                    client.publish("/SmartHome/IR_remoter/set", mqttMessage);//发送主题为"/test/button"的消息
+                    client.publish("/SmartHome/IR_remoter/set", mqttMessage);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_off:
+                initShock();
+                t = airControl.getT();
+                t[1] = "关机";
+                airControl.setT(t);
+                String code = "{\"IR_CODE\":\"9044,4472, 672,536,672,536,668,1644, 668,536,672,1640,668,1640,668,540,668,536,672, 536,668,540,668,1644,668,1640,668,536,672,536,668, 540,668,540,668,536,672,536,668,540,672,536,668,1640,672,1640,692,516,668,540,668,540,668,536,672,536,696,512,696,1612,696,516,692,1616,696,512,696,512,692,1620,692,512,692,19964,668,540,668,536,672,536,648,560,668,544,664,540,644,564,644,560,648,560,644,564,644,564,644,564,644,564,644,560,648,564,644,560,644,564,644,560,648,560,648,560,648,560,648,560,648,560,644,564,644,564,644,564,644,560,648,1664,644,564,644,1664,644,564,644,1668,644,600\"}";
+                MqttMessage mqttMessageoff = new MqttMessage(code.getBytes());
+                try {
+                    client.publish("/SmartHome/IR_remoter/set", mqttMessageoff);//off发送主题为"/test/button"的消息
+                    client.publish("/SmartHome/IR_remoter/set", mqttMessageoff);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_refrigeration:
+                initShock();
+                setMode("制冷");
+                MqttMessage msgMessagecool = new MqttMessage(s.getBytes());
+                try {
+                    client.publish("/SmartHome/IR_remoter/set", msgMessagecool);//发送主题为"/test/button"的消息
+                    client.publish("/SmartHome/IR_remoter/set", msgMessagecool);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_heating:
+                tv_temperature.setText("30");
+                initShock();
+                setMode("制热");
+                MqttMessage hot = new MqttMessage(s.getBytes());
+                try {
+                    client.publish("/SmartHome/IR_remoter/set", hot);//发送主题为"/test/button"的消息
+                    client.publish("/SmartHome/IR_remoter/set", hot);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_timing:
+                initShock();
+                Air air = new Air();
+                t = air.getT();
+                if ("24".equals(t[6])) {
+                    Log.e("24", "tgh");
+                } else {
+                    t[6] = String.valueOf(Integer.parseInt(t[6]) + 0.5);
+                    air.setT(t);
+                    String s = air.S();
+                    Log.e("s", "" + s);
+                    MqttMessage mqttMessage12 = new MqttMessage(s.getBytes());
+                    try {
+
+                        client.publish("/SmartHome/IR_remoter/set", mqttMessage12);
+                        client.publish("/SmartHome/IR_remoter/set", mqttMessage12);
+                    } catch (MqttPersistenceException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (MqttException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                    }
+                }
+                break;
+            case R.id.btn_dehumidification:
+                initShock();
+                setMode("除湿");
+                MqttMessage cleathot = new MqttMessage(s.getBytes());
+                try {
+                    client.publish("/SmartHome/IR_remoter/set", cleathot);//发送主题为"/test/button"的消息
+                    client.publish("/SmartHome/IR_remoter/set", cleathot);//发送主题为"/test/button"的消息
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_air_supply:
+                initShock();
+                t = airControl.getT();
+                if (t[2].equals("4")) {
+                    t[2]="1";
+                } else {
+                    t[2] = String.valueOf(Integer.parseInt(t[2]) + 1);
+                    tv_temperature.setText(t[5]);
+                    airControl.setT(t);
+                    s = airControl.S();
+                    Log.e("s", "" + s);
+                    MqttMessage sendwind = new MqttMessage(s.getBytes());
+                    try {
+
+                        client.publish("/SmartHome/IR_remoter/set", sendwind);//发送主题为"/test/button"的消息
+                        client.publish("/SmartHome/IR_remoter/set", sendwind);//发送主题为"/test/button"的消息
+                    } catch (MqttPersistenceException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (MqttException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                    }
+                }
+                break;
+            case R.id.ll_less:
+                initShock();
+                t = airControl.getT();
+                if ("16".equals(t[5])) {
+                    Log.e("23", "tgh");
+                } else {
+                    t[5] = String.valueOf(Integer.parseInt(t[5]) - 1);
+                    t[15] = String.valueOf(Integer.parseInt(t[5]));
+                    tv_temperature.setText(t[5]);
+                    airControl.setT(t);
+                    clearControl();
+                    s = airControl.S();
+                    Log.e("TAG", "" + airControl.S().length());
+                    //   msgMessage.clearPayload();
+                    MqttMessage mqttMessage3 = new MqttMessage(s.getBytes());
+                    try {
+
+                        client.publish("/SmartHome/IR_remoter/set", mqttMessage3);
+                        client.publish("/SmartHome/IR_remoter/set", mqttMessage3);
+                    } catch (MqttPersistenceException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (MqttException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                    }
+                }
+                break;
+            case R.id.ll_plus:
+                initShock();
+                t = airControl.getT();
+                if (t[5].equals("30")) {
+                    Log.e("23", "tgh");
+                } else {
+                    t[5] = String.valueOf(Integer.parseInt(t[5]) + 1);
+                    t[15] = String.valueOf(Integer.parseInt(t[5]));
+                    tv_temperature.setText(t[5]);
+                    airControl.setT(t);
+                    s = airControl.S();
+                    MqttMessage mqttMessage4;
+                    Log.e("TAG", "" + s);
+                    mqttMessage4 = new MqttMessage(s.getBytes());
+                    try {
+                        client.publish("/SmartHome/IR_remoter/set", mqttMessage4);
+                        client.publish("/SmartHome/IR_remoter/set", mqttMessage4);
+                    } catch (MqttPersistenceException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (MqttException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                    }
+                }
+                break;
+            case R.id.btn_sweep_left_and_right:
+                initShock();
+                airControl = new Air();
+                t = airControl.getT();
+                t[13] = "有";
+                airControl.setT(t);
+                s = airControl.S();
+                Log.e("s", "" + s);
+                MqttMessage mqttMessage5 = new MqttMessage(s.getBytes());
+                try {
+
+                    client.publish("/SmartHome/IR_remoter/set", mqttMessage5);
+                    client.publish("/SmartHome/IR_remoter/set", mqttMessage5);
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
+            case R.id.btn_sweep_up_and_down:
+                initShock();
+                Air air3 = new Air();
+                String[] t3 = air3.getT();
+                t3[12] = "有";
+                air3.setT(t3);
+                String s3 = air3.S();
+                Log.e("s", "" + s3);
+
+                MqttMessage msgMessage10 = new MqttMessage(s3.getBytes());
+                try {
+                    Log.e("s", "" + msgMessage10);
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage10);
+                    client.publish("/SmartHome/IR_remoter/set", msgMessage10);
+                } catch (MqttPersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
+                }
+                break;
             case R.id.btn_more:
                 airConditioningExtendedDialog = new AirConditioningExtendedDialog(AirConditioningRemoteControlActivity.this);
                 airConditioningExtendedDialog.setBtn1OnclickListener(new AirConditioningExtendedDialog.onBtn1OnclickListener() {
@@ -104,7 +363,7 @@ public class AirConditioningRemoteControlActivity extends Activity implements Vi
                         t[9] = "健康";
                         air.setT(t);
                         String s = air.S();
-                        tvTemperature.setText(t[5]);
+                        tv_temperature.setText(t[5]);
                         Log.e("s", "" + s);
                         MqttMessage msgMessage = null;
                         msgMessage = new MqttMessage(s.getBytes());
@@ -134,7 +393,7 @@ public class AirConditioningRemoteControlActivity extends Activity implements Vi
                         air.setT(t);
                         String s = air.S();
                         Log.e("s", "" + s);
-                        tvTemperature.setText(t[5]);
+                        tv_temperature.setText(t[5]);
                         MqttMessage msgMessage = null;
                         msgMessage = new MqttMessage(s.getBytes());
                         try {
@@ -266,11 +525,7 @@ public class AirConditioningRemoteControlActivity extends Activity implements Vi
                     @Override
                     public void onBtn7Click() {
                         initShock();
-                        Air air = new Air();
-                        String[] t = air.getT();
-                        t[2] = "换气";
-                        air.setT(t);
-                        String s = air.S();
+                        setMode("送风");
                         Log.e("s", "" + s);
                         MqttMessage msgMessage = null;
                         msgMessage = new MqttMessage(s.getBytes());
@@ -296,7 +551,7 @@ public class AirConditioningRemoteControlActivity extends Activity implements Vi
                         initShock();
                         Air air = new Air();
                         String[] t = air.getT();
-                        t[3] = "扫风";
+                        t[3] = "有";
                         air.setT(t);
                         String s = air.S();
                         Log.e("s", "" + s);
@@ -323,7 +578,7 @@ public class AirConditioningRemoteControlActivity extends Activity implements Vi
                         initShock();
                         Air air = new Air();
                         String[] t = air.getT();
-                        t[4] = "睡眠";
+                        t[4] = "有";
                         air.setT(t);
                         String s = air.S();
                         Log.e("s", "" + s);
@@ -365,7 +620,7 @@ public class AirConditioningRemoteControlActivity extends Activity implements Vi
         t[0] = mode;
         airControl.setT(t);
         s = airControl.S();
-        tvTemperature.setText(t[5]);
+        tv_temperature.setText(t[5]);
     }
 
     private void clearControl() {
@@ -477,259 +732,6 @@ public class AirConditioningRemoteControlActivity extends Activity implements Vi
         //
         //            }
         //        });
-    }
-
-    @OnClick({R.id.btn_heating, R.id.btn_dehumidification, R.id.btn_air_supply, R.id.btn_sweep_up_and_down, R.id.btn_sweep_left_and_right, R.id.btn_timing, R.id.btn_more,R.id.btn_off,R.id.ll_less,R.id.ll_plus,R.id.btn_refrigeration})
-    public void onViewClicked(View view) {
-
-        switch (view.getId()) {
-            case R.id.btn_heating:
-                tvTemperature.setText("30");
-                initShock();
-                setMode("制热");
-                MqttMessage hot = new MqttMessage(s.getBytes());
-                try {
-                    client.publish("/SmartHome/IR_remoter/set", hot);//发送主题为"/test/button"的消息
-                    client.publish("/SmartHome/IR_remoter/set", hot);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_dehumidification:
-                initShock();
-                setMode("除湿");
-                MqttMessage cleathot = new MqttMessage(s.getBytes());
-                try {
-                    client.publish("/SmartHome/IR_remoter/set", cleathot);//发送主题为"/test/button"的消息
-                    client.publish("/SmartHome/IR_remoter/set", cleathot);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_air_supply:
-                initShock();
-                setMode("送风");
-                tvTemperature.setText(t[5]);
-                MqttMessage sendwind = new MqttMessage(s.getBytes());
-                try {
-
-                    client.publish("/SmartHome/IR_remoter/set", sendwind);//发送主题为"/test/button"的消息
-                    client.publish("/SmartHome/IR_remoter/set", sendwind);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_sweep_up_and_down:
-                initShock();
-                Air air3 = new Air();
-                String[] t3 = air3.getT();
-                t3[12] = "有";
-                air3.setT(t3);
-                String s3 = air3.S();
-                Log.e("s", "" + s3);
-
-                 msgMessage = new MqttMessage(s3.getBytes());
-                try {
-                    Log.e("s", "" + msgMessage);
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_sweep_left_and_right:
-                initShock();
-                airControl = new Air();
-                t = airControl.getT();
-                t[13] = "有";
-                airControl.setT(t);
-                s = airControl.S();
-                Log.e("s", "" + s);
-                msgMessage = new MqttMessage(s.getBytes());
-                try {
-
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_timing:
-                initShock();
-                Air air = new Air();
-                t = air.getT();
-                if ("24".equals(t[6])) {
-                    Log.e("24", "tgh");
-                } else {
-                    t[6] = String.valueOf(Integer.parseInt(t[6]) + 0.5);
-                    air.setT(t);
-                    String s = air.S();
-                    Log.e("s", "" + s);
-                    msgMessage = new MqttMessage(s.getBytes());
-                    try {
-
-                        client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                        client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                    } catch (MqttPersistenceException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (MqttException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                    }
-                }
-                break;
-            case R.id.btn_turn:
-                initShock();
-                t = airControl.getT();
-                t[1] = "开机";
-                airControl.setT(t);
-                s = airControl.S();
-                tvTemperature.setText(t[5]);
-                Log.e("open", String.valueOf(airControl.S().length()));
-                msgMessage = new MqttMessage(s.getBytes());
-                try {
-                    client.publish("/SmartHome/IR_remoter/set", msgMessage);//发送主题为"/test/button"的消息
-                    client.publish("/SmartHome/IR_remoter/set",msgMessage);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_off:
-                initShock();
-                t = airControl.getT();
-                t[1] = "关机";
-                airControl.setT(t);
-                String code = "{\"IR_CODE\":\"9044,4472, 672,536,672,536,668,1644, 668,536,672,1640,668,1640,668,540,668,536,672, 536,668,540,668,1644,668,1640,668,536,672,536,668, 540,668,540,668,536,672,536,668,540,672,536,668,1640,672,1640,692,516,668,540,668,540,668,536,672,536,696,512,696,1612,696,516,692,1616,696,512,696,512,692,1620,692,512,692,19964,668,540,668,536,672,536,648,560,668,544,664,540,644,564,644,560,648,560,644,564,644,564,644,564,644,564,644,560,648,564,644,560,644,564,644,560,648,560,648,560,648,560,648,560,648,560,644,564,644,564,644,564,644,560,648,1664,644,564,644,1664,644,564,644,1668,644,600\"}";
-                MqttMessage mqttMessageoff = new MqttMessage(code.getBytes());
-                try {
-                    client.publish("/SmartHome/IR_remoter/set", mqttMessageoff);//off发送主题为"/test/button"的消息
-                    client.publish("/SmartHome/IR_remoter/set", mqttMessageoff);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.btn_less:
-                initShock();
-                t = airControl.getT();
-                if ("16".equals(t[5])) {
-                    Log.e("23", "tgh");
-                } else {
-                    t[5] = String.valueOf(Integer.parseInt(t[5]) - 1);
-                    t[15] = String.valueOf(Integer.parseInt(t[5]));
-                    tvTemperature.setText(t[5]);
-
-                    airControl.setT(t);
-                    clearControl();
-                    s = airControl.S();
-                    Log.e("TAG", "" + airControl.S().length());
-                    //   msgMessage.clearPayload();
-                    msgMessage = new MqttMessage(s.getBytes());
-                    try {
-
-                        client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                        client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                    } catch (MqttPersistenceException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (MqttException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                    }
-                }
-                break;
-            case R.id.btn_refrigeration:
-                initShock();
-                setMode("制冷");
-                MqttMessage msgMessagecool = new MqttMessage(s.getBytes());
-                try {
-                    client.publish("/SmartHome/IR_remoter/set", msgMessagecool);//发送主题为"/test/button"的消息
-                    client.publish("/SmartHome/IR_remoter/set", msgMessagecool);//发送主题为"/test/button"的消息
-                } catch (MqttPersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (MqttException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                }
-                break;
-            case R.id.ll_plus:
-                initShock();
-                t = airControl.getT();
-                if (t[5].equals("30")) {
-                    Log.e("23", "tgh");
-                } else {
-                    t[5] = String.valueOf(Integer.parseInt(t[5]) + 1);
-                    t[15] = String.valueOf(Integer.parseInt(t[5]));
-                    tvTemperature.setText(t[5]);
-                    airControl.setT(t);
-                    s = airControl.S();
-                    Log.e("TAG", "" + s);
-                    msgMessage = new MqttMessage(s.getBytes());
-                    try {
-                        client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                        client.publish("/SmartHome/IR_remoter/set", msgMessage);
-                    } catch (MqttPersistenceException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (MqttException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        //其余的状态msgMessage = null;所以加了这个catch (Exception e)
-                    }
-                }
-                break;
-                default:
-        }
     }
 
 

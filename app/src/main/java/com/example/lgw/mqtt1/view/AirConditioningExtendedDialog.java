@@ -12,28 +12,28 @@ import android.widget.Button;
 
 import com.example.lgw.mqtt1.R;
 
-import butterknife.BindView;
+
 import butterknife.OnClick;
 
-public class AirConditioningExtendedDialog extends Dialog {
-    @BindView(R.id.btn1)
-    Button btn1;
-    @BindView(R.id.btn2)
-    Button btn2;
-    @BindView(R.id.btn3)
-    Button btn3;
-    @BindView(R.id.btn4)
-    Button btn4;
-    @BindView(R.id.btn5)
-    Button btn5;
-    @BindView(R.id.btn6)
-    Button btn6;
-    @BindView(R.id.btn7)
-    Button btn7;
-    @BindView(R.id.btn8)
-    Button btn8;
-    @BindView(R.id.btn9)
-    Button btn9;
+public class AirConditioningExtendedDialog extends Dialog implements View.OnClickListener {
+
+    private Button btn1;
+
+    private Button btn2;
+
+    private Button btn3;
+
+    private Button btn4;
+
+    private Button btn5;
+
+    private Button btn6;
+
+    private Button btn7;
+
+    private Button btn8;
+
+    private Button btn9;
 
     public AirConditioningExtendedDialog(Context context) {
         super(context, R.style.MyDialog);
@@ -52,6 +52,7 @@ public class AirConditioningExtendedDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_air_conditioning_extended_button);
+        initView();
         //按空白处能取消动画
         setCanceledOnTouchOutside(true);
         //用户可以点击后退键关闭 Dialog
@@ -68,8 +69,29 @@ public class AirConditioningExtendedDialog extends Dialog {
 
     }
 
+    private void initView() {
+        btn1=(Button)findViewById(R.id.btn1);
+        btn2=(Button)findViewById(R.id.btn2);
+        btn3=(Button)findViewById(R.id.btn3);
+        btn4=(Button)findViewById(R.id.btn4);
+        btn5=(Button)findViewById(R.id.btn5);
+        btn6=(Button)findViewById(R.id.btn6);
+        btn7=(Button)findViewById(R.id.btn7);
+        btn8=(Button)findViewById(R.id.btn8);
+        btn9=(Button)findViewById(R.id.btn9);
+    }
+
 
     private void initData() {
+        btn1.setOnClickListener(this);
+        btn2.setOnClickListener(this);
+        btn3.setOnClickListener(this);
+        btn4.setOnClickListener(this);
+        btn5.setOnClickListener(this);
+        btn6.setOnClickListener(this);
+        btn7.setOnClickListener(this);
+        btn8.setOnClickListener(this);
+        btn9.setOnClickListener(this);
     }
 
 
@@ -127,9 +149,12 @@ public class AirConditioningExtendedDialog extends Dialog {
 
     }
 
-    @OnClick({R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
+
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.btn1:
                 if (btn1OnclickListener != null) {
                     btn1OnclickListener.onBtn1Click();

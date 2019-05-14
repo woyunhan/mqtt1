@@ -1,8 +1,8 @@
 package com.example.lgw.mqtt1.Activity;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -14,11 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.lgw.mqtt1.R;
 import com.example.lgw.mqtt1.remote.Remote;
 import com.example.lgw.mqtt1.remote.RemoteDao;
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -26,60 +24,56 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class FanRemoteControlActivity extends Activity implements View.OnClickListener {
 
-    @BindView(R.id.tv_control)
-    TextView tvControl;
-    @BindView(R.id.btn_wind_speed)
-    Button btnWindSpeed;
-    @BindView(R.id.btn_turn_off)
-    Button btnTurnOff;
-    @BindView(R.id.btn_shaking_head)
-    Button btnShakingHead;
-    @BindView(R.id.btn_wind_class)
-    Button btnWindClass;
     private MqttClient client;//client
     private MqttConnectOptions options;//配置
     String TelephonyIMEI = "";
     MqttConnectThread mqttConnectThread = new MqttConnectThread();//连接服务器任务
     private RemoteDao ordersDao;
+    private TextView tv_control;
+    private Button btn_turn_off;
+    private Button btn_shaking_head;
+    private Button btn_wind_speed;
     MqttMessage msgMessage = null;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fan);
-        ButterKnife.bind(this);
         initView();
+        initOnClickListener();
         init();
     }
 
 
+
+
     private void initView() {
         ordersDao = new RemoteDao(this);
-        if (!ordersDao.isDataExist()) {
+        if (! ordersDao.isDataExist()){
             ordersDao.initTable();
         }
-        tvControl.setText("艾美克风扇 airmate_fan_weizhi");
+        tv_control=(TextView)findViewById(R.id.tv_control);
+        tv_control.setText("艾美克风扇 airmate_fan_weizhi");
+        btn_turn_off=(Button)findViewById(R.id.btn_turn_off);
+        btn_shaking_head=(Button)findViewById(R.id.btn_shaking_head);
+        btn_wind_speed=(Button)findViewById(R.id.btn_wind_speed);
     }
+    private void initOnClickListener() {
+        btn_turn_off.setOnClickListener(this);
+        btn_shaking_head.setOnClickListener(this);
+        btn_wind_speed.setOnClickListener(this);
 
-
-
+    }
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+        switch (view.getId()){
             case R.id.btn_turn_off:
                 initShock();
 
                 List<Remote> turn_offOrders = ordersDao.getTurn_offOrder();
-                for (Remote Remote : turn_offOrders) {
+                for (Remote Remote : turn_offOrders){
                     msgMessage = new MqttMessage((Remote.code).getBytes());
                 }
 
@@ -100,7 +94,7 @@ public class FanRemoteControlActivity extends Activity implements View.OnClickLi
             case R.id.btn_shaking_head:
                 initShock();
                 List<Remote> shaking_headOrders = ordersDao.getShaking_headOrder();
-                for (Remote Remote : shaking_headOrders) {
+                for (Remote Remote : shaking_headOrders){
                     msgMessage = new MqttMessage((Remote.code).getBytes());
                 }
                 try {
@@ -120,7 +114,7 @@ public class FanRemoteControlActivity extends Activity implements View.OnClickLi
             case R.id.btn_wind_speed:
                 initShock();
                 List<Remote> wind_speedOrders = ordersDao.getWind_speedOrder();
-                for (Remote Remote : wind_speedOrders) {
+                for (Remote Remote : wind_speedOrders){
                     msgMessage = new MqttMessage((Remote.code).getBytes());
                 }
                 try {
@@ -141,7 +135,6 @@ public class FanRemoteControlActivity extends Activity implements View.OnClickLi
                 break;
         }
     }
-
     private void initShock() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(new long[]{0, 100}, -1);
@@ -202,11 +195,13 @@ public class FanRemoteControlActivity extends Activity implements View.OnClickLi
     //    };
 
     /*  初始化配置Mqtt  */
-    private void MyMqttInit() {
-        try {
+    private void MyMqttInit()
+    {
+        try
+        {
             //(1)主机地址(2)客户端ID,一般以客户端唯一标识符(不能够和其它客户端重名)(3)最后一个参数是指数据保存在内存(具体保存什么数据,以后再说,其实现在我也不是很确定)
             //client = new MqttClient("tcp://47.100.126.114:1883",TelephonyIMEI,new MemoryPersistence());
-            client = new MqttClient("tcp://220.180.184.7:1883", TelephonyIMEI, new MemoryPersistence());
+            client = new MqttClient("tcp://220.180.184.7:1883",TelephonyIMEI,new MemoryPersistence());
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -249,24 +244,15 @@ public class FanRemoteControlActivity extends Activity implements View.OnClickLi
         //        });
     }
 
-    @OnClick({R.id.btn_wind_speed, R.id.btn_turn_off, R.id.btn_shaking_head})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn_wind_speed:
-                break;
-            case R.id.btn_turn_off:
-                break;
-            case R.id.btn_shaking_head:
-                break;
-        }
-    }
-
 
     /*连接服务器任务*/
-    class MqttConnectThread extends Thread {
+    class MqttConnectThread extends Thread
+    {
         @Override
-        public void run() {
-            try {
+        public void run()
+        {
+            try
+            {
                 client.connect(options);//连接服务器,连接不上会阻塞在这
 
                 //client.subscribe("/#",0);//设置接收的主题
@@ -281,7 +267,9 @@ public class FanRemoteControlActivity extends Activity implements View.OnClickLi
                         Toast.makeText(getApplicationContext(), "连接成功", 800).show();
                     }
                 });
-            } catch (MqttSecurityException e) {
+            }
+            catch (MqttSecurityException e)
+            {
                 runOnUiThread(new Runnable() {
                     @Override
                     @SuppressLint("WrongConstant")
@@ -289,7 +277,9 @@ public class FanRemoteControlActivity extends Activity implements View.OnClickLi
                         Toast.makeText(getApplicationContext(), "连接失败，安全问题", 800).show();
                     }
                 });
-            } catch (MqttException e) {
+            }
+            catch (MqttException e)
+            {
                 runOnUiThread(new Runnable() {
                     @Override
                     @SuppressLint("WrongConstant")

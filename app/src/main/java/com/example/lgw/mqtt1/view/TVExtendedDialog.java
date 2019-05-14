@@ -11,40 +11,40 @@ import android.widget.Button;
 
 import com.example.lgw.mqtt1.R;
 
-import butterknife.BindView;
+
 import butterknife.OnClick;
 
-public class TVExtendedDialog extends Dialog {
-    @BindView(R.id.btn1)
-    Button btn1;
-    @BindView(R.id.btn2)
-    Button btn2;
-    @BindView(R.id.btn3)
-    Button btn3;
-    @BindView(R.id.btn4)
-    Button btn4;
-    @BindView(R.id.btn5)
-    Button btn5;
-    @BindView(R.id.btn6)
-    Button btn6;
-    @BindView(R.id.btn7)
-    Button btn7;
-    @BindView(R.id.btn8)
-    Button btn8;
-    @BindView(R.id.btn9)
-    Button btn9;
-    @BindView(R.id.btn10)
-    Button btn10;
-    @BindView(R.id.btn11)
-    Button btn11;
-    @BindView(R.id.btn12)
-    Button btn12;
-    @BindView(R.id.btn13)
-    Button btn13;
-    @BindView(R.id.btn14)
-    Button btn14;
-    @BindView(R.id.btn15)
-    Button btn15;
+public class TVExtendedDialog extends Dialog implements View.OnClickListener {
+
+    private Button btn1;
+
+    private Button btn2;
+
+    private Button btn3;
+
+    private Button btn4;
+
+    private Button btn5;
+
+    private Button btn6;
+
+    private Button btn7;
+
+    private Button btn8;
+
+    private Button btn9;
+
+    private Button btn10;
+
+    private Button btn11;
+
+    private Button btn12;
+
+    private Button btn13;
+
+    private Button btn14;
+
+    private Button btn15;
 
     public TVExtendedDialog(Context context) {
         super(context, R.style.MyDialog);
@@ -69,6 +69,7 @@ public class TVExtendedDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_tv_extended_button);
+        initView();
         //按空白处能取消动画
         setCanceledOnTouchOutside(true);
         //用户可以点击后退键关闭 Dialog
@@ -82,7 +83,41 @@ public class TVExtendedDialog extends Dialog {
         p.width = d.getWidth(); //设置dialog的宽度为当前手机屏幕的宽度
         getWindow().setAttributes(p);
     }
+
+    private void initView() {
+        btn1=(Button)findViewById(R.id.btn1);
+        btn2=(Button)findViewById(R.id.btn2);
+        btn3=(Button)findViewById(R.id.btn3);
+        btn4=(Button)findViewById(R.id.btn4);
+        btn5=(Button)findViewById(R.id.btn5);
+        btn6=(Button)findViewById(R.id.btn6);
+        btn7=(Button)findViewById(R.id.btn7);
+        btn8=(Button)findViewById(R.id.btn8);
+        btn9=(Button)findViewById(R.id.btn9);
+        btn10=(Button)findViewById(R.id.btn10);
+        btn11=(Button)findViewById(R.id.btn11);
+        btn12=(Button)findViewById(R.id.btn12);
+        btn13=(Button)findViewById(R.id.btn13);
+        btn14=(Button)findViewById(R.id.btn14);
+        btn15=(Button)findViewById(R.id.btn15);
+    }
+
     private void initData() {
+        btn1.setOnClickListener(this);
+        btn2.setOnClickListener(this);
+        btn3.setOnClickListener(this);
+        btn4.setOnClickListener(this);
+        btn5.setOnClickListener(this);
+        btn6.setOnClickListener(this);
+        btn7.setOnClickListener(this);
+        btn8.setOnClickListener(this);
+        btn9.setOnClickListener(this);
+        btn10.setOnClickListener(this);
+        btn11.setOnClickListener(this);
+        btn12.setOnClickListener(this);
+        btn13.setOnClickListener(this);
+        btn14.setOnClickListener(this);
+        btn15.setOnClickListener(this);
     }
     public void setBtn1OnclickListener(onBtn1OnclickListener onBtn1OnclickListener) {
         this.btn1OnclickListener = onBtn1OnclickListener;
@@ -143,9 +178,11 @@ public class TVExtendedDialog extends Dialog {
         this.btn15OnclickListener = onBtn15OnclickListener;
     }
 
-    @OnClick({R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn10, R.id.btn11, R.id.btn12, R.id.btn13, R.id.btn14, R.id.btn15})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.btn1:
                 if (btn1OnclickListener != null) {
                     btn1OnclickListener.onBtn1Click();
